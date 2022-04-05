@@ -59,12 +59,73 @@ class linked_list():
       spot.setItem(val)
     else:
       raise IndexError('thats not a good spot')
+
+  def __contains__(self,item):
+    for i in self:
+      if i == item:
+        return(True)
+    return(False)
+
+  def __eq__(self,other):
+    if type(self) != type(other):
+      return(False)
+    if self.len != other.len:
+      return(False) 
+    spot1 = self.first.getNext()
+    spot2 = other.first.getNext()
+    for _ in range(self.len):
+      if spot1.getItem() != spot2.getItem():
+        return(False)
+      spot1 = spot1.getNext()
+      spot2 = spot2.getNext()
+    return(True)
+
+  def __add__(self,other):
+    if type(self) != type(other):
+      raise TypeError('how would you do that')
+    new_list = linked_list()
+    for i in self:
+      new_list.append(i)
+    for e in other:
+      new_list.append(e)
+    return(new_list)
+
+  def insert(self,item,index):
+    if index > self.len:
+      raise IndexError('out of range')
+    spot = self.first.getNext()
+    for _ in range(index):
+      spot = spot.getNext()
+    new_node = linked_list.__node(item,spot.getNext())
+    spot.setNext(new_node)
+    self.len += 1
+
+  def __delitem__(self,index):
+    if index > self.len:
+      raise IndexError('out of range')
+    spot = self.first
+    for _ in range(index):
+      spot = spot.getNext()
+    spot.setNext(spot.getNext().getNext())
+    self.len -= 1
+
+  def __len__(self):
+    return(self.len)
+
+  def is_sorted(self):
+    spot=self.first.getNext()
+    for _ in range(self.len-1):
+      if spot.getItem() > spot.getNext().getItem():
+        return(False)
+      spot = spot.getNext()
+    return(True)
     
 def main():
   link_list = linked_list(range(100))
+  link_list2 = linked_list(range(100))
+  link_list.insert(10,1)
   print(link_list)
-  print(link_list[3])
-  link_list[99] = 100
-  print(link_list)
+  print(link_list.is_sorted())
+
 
 main()
