@@ -162,42 +162,72 @@ class linked_list():
     def merge_sort(self):
         if self.len <= 1:
             return
-        right = self.split() #make split
+        right = self.split()
         self.merge_sort()
         right.merge_sort()
-        self.merge(right) #make merge
+        self.merge(right)
 
     def split(self):
-        spot = self.first.getNext()
+        spot = self.first
+        if self.len <= 1:
+            raise Exception("list too short")
         for i in range(self.len//2):
             spot = spot.getNext()
         right_node = spot.getNext()
         spot.setNext(None)
         right = linked_list(first = right_node)
-        
         right.last = self.last
-        right.len = self.len - i
-        self.len = i
+        right.len = self.len - i - 1
+        self.len = i + 1
         self.last = spot
         return(right)
-        
 
+    def merge(self,right):
+        left = linked_list(first=self.first)
+        del left[0]
+        rspot = right.first.getNext()
+        lspot = left.first.getNext()
+        self.first = linked_list.__node(None)
+        self.last = self.first
+        self.len = 0
+        done = False
+        while not done:
+            if rspot.getItem() < lspot.getItem():
+                self.append(rspot.getItem())
+                if rspot.getNext() is None:
+                    while lspot is not None:
+                        self.append(lspot.getItem())
+                        lspot = lspot.getNext()
+                    done = True
+                else:
+                    rspot = rspot.getNext()
+            else:
+                self.append(lspot.getItem())
+                if lspot.getNext() is None:
+                    while rspot is not None:
+                        self.append(rspot.getItem())
+                        rspot = rspot.getNext()
+                    done = True
+                else:
+                    lspot = lspot.getNext()
+
+        
 def time_bubble(to_sort):
     link_list = linked_list(to_sort)
     time = thread_time()
-    link_list.bubble_sort_3()
+    link_list.merge_sort()
     return (thread_time() - time)
 
 
 def test_bubble(n, shuffle_amount, f):
     for i in range(2, n):
         time_list = []
-        for x in range(1):
+        for x in range(5):
             bad_time_list = [
                 time_bubble(make_list_reverse(i)),
-#                time_bubble(make_list_almost(i, shuffle_amount)),
-#                time_bubble(make_list_shuffle(i)),
-#                time_bubble(list(range(i)))
+                time_bubble(make_list_almost(i, shuffle_amount)),
+                time_bubble(make_list_shuffle(i)),
+                time_bubble(list(range(i)))
             ]
             time_list.append(bad_time_list)
         print(i)
@@ -233,16 +263,16 @@ def make_list_reverse(size):
 
 
 def main():
-    size = 300
+    size = 302
     f = open('data' + str(size) + '.csv', 'w')
     f.write("number of elments,reverse,almost sorted,shuffed,sorted")
     test_bubble(size, 25, f)
     f.close()
     
-def test_split():
-    link_list = linked_list(range(20))
+def test():
+    link_list = linked_list(range(10,0,-1))
     print(link_list)
-    right = link_list.split()
-    print(link_list,right)
-test_split()
-#main()
+    link_list.merge_sort()
+    print(link_list)
+#test()
+main()
