@@ -140,7 +140,7 @@ class linked_list():
         i_val = self[i]
         self[i] = self[j]
         self[j] = i_val
-    def bubble_sort(self):
+    def bubble_sort_1(self):
         while not self.is_sorted():
             for i in range(self.len - 1):
                 if self[i] > self[i + 1]:
@@ -157,7 +157,7 @@ class linked_list():
                     self.swap(i, i + 1)
                     swaps = True
 
-    def bubble_sort_3(self):
+    def bubble_sort(self):
         swaps = True
         while swaps:
             swaps = False
@@ -254,6 +254,7 @@ class linked_list():
         self.first = lower.first
         self.last = lower.last
         self.len = lower.len
+        
     def validate(self):
         spot = self.first
         for i in range(self.len):
@@ -264,21 +265,22 @@ class linked_list():
             raise AttributeError('len not equal to len \n too long')
         if spot != self.last:
             raise AttributeError('last not equal to last')
-def time_sort(to_sort):
+            
+def time_sort(to_sort,funtion):
     time = thread_time()
-    to_sort.merge_sort()
+    funtion(to_sort)
     return (thread_time()- time)
 
-def test_sort(n, shuffle_amount, f,step):
+def test_sort(n, shuffle_amount, f,step,funtion):
     for i in range(2, n+1,step):
         total_time = thread_time()
         time_list = []
         for x in range(1):
             bad_time_list = [
-                #time_sort(make_list_reverse(i)),
-                #time_sort(make_list_almost(i, shuffle_amount)),
-                time_sort(make_list_shuffle(i)),
-                #time_sort(list(range(i)))
+                #time_sort(make_list_reverse(i),funtion),
+                #time_sort(make_list_almost(i, shuffle_amount),funtion),
+                time_sort(make_list_shuffle(i),funtion),
+                #time_sort(list(range(i)),funtion)
             ]
             time_list.append(bad_time_list)
         print(i)
@@ -317,18 +319,22 @@ def make_list_reverse(size):
 
 
 def main():
-    size = 598
-    f = open('data' + str(size) + '.csv', 'w')
+    size = 15
+    fun_string = 'merge_sort'
+    step = 1
+    funtion = getattr(linked_list,fun_string)
+    f = open(fun_string + str(size)+'.csv', 'w')
     f.write("number of elments,reverse,almost sorted,shuffed,sorted")
-    test_sort(size, 25, f,1)
+    test_sort(size, 25, f,step,funtion)
     f.close()
     
 def test():
     link_list = linked_list(range(2,-1,-1))
     link_list2 = linked_list([3,4])
     link_list + link_list2
+    funtion = linked_list().quick_sort
     print(link_list)
-    link_list.quick_sort()
+    link_list.funtion()
     print(link_list)
 print('\n'*2)
 main()
