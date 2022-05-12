@@ -86,14 +86,15 @@ class linked_list():
 
     def __add__(self, other):
         if type(self) != type(other):
-            raise TypeError('how would you do that')
-        new_list = linked_list()
-        for i in self:
-            new_list.append(i)
-        for e in other:
-            new_list.append(e)
-        return (new_list)
-
+            raise TypeError('haha i got to make the error mesage \n btw cant add differnt types')
+        if self == other:
+            raise ReferenceError("cant add self to self") 
+        if other.len <= 0:
+            return(self)
+        self.last.setNext(other.first.getNext())
+        self.last = other.last
+        self.len += other.len
+        return(self)
     def insert(self, item, index):
         if index > self.len:
             raise IndexError('out of range')
@@ -115,7 +116,14 @@ class linked_list():
 
     def __len__(self):
         return (self.len)
-
+        
+    def minimiun(self,spot):
+        min_spot = spot
+        while spot is not None:
+            if spot.getItem() < min_spot.getItem():
+                min_spot = spot
+            spot = spot.getNext()
+        return(min_spot)
     def is_sorted(self):
         spot = self.first.getNext()
         for _ in range(self.len - 1):
@@ -124,11 +132,14 @@ class linked_list():
             spot = spot.getNext()
         return (True)
 
-    def swap(self, i, j):
+    def swap_spots(self,i,j):
+        i_val = i.getItem()
+        i.setItem(j.getItem())
+        j.setItem(i_val)
+    def swap(self,i,j):
         i_val = self[i]
         self[i] = self[j]
         self[j] = i_val
-
     def bubble_sort(self):
         while not self.is_sorted():
             for i in range(self.len - 1):
@@ -153,18 +164,19 @@ class linked_list():
             spot = self.first.getNext()
             while spot.getNext() is not None:
                 if spot.getItem() > spot.getNext().getItem():
-                    old_spot = spot.getItem()
-                    spot.setItem(spot.getNext().getItem())
-                    spot.getNext().setItem(old_spot)
+                    self.swap_spots(spot,spot.getNext())
                     swaps = True
                 spot = spot.getNext()
-
-    def merge_sort(self):
+                
+    def merge_sort(self,check_sort=False):
+        if check_sort:
+            if self.is_sorted():
+                return
         if self.len <= 1:
             return
         right = self.split()
-        self.merge_sort()
-        right.merge_sort()
+        self.merge_sort(False)
+        right.merge_sort(False)
         self.merge(right)
 
     def split(self):
@@ -210,24 +222,63 @@ class linked_list():
                     done = True
                 else:
                     lspot = lspot.getNext()
-
-        
-def time_bubble(to_sort):
-    link_list = linked_list(to_sort)
+    def sel_sort(self):
+        spot = self.first.getNext()
+        while not self.is_sorted():
+            min_spot = self.minimiun(spot)
+            self.swap_spots(min_spot,spot)
+            spot = spot.getNext()
+            
+    def quick_sort(self):
+        starting_len = self.len
+        if self.len <= 1:
+            return()
+        spot = self.first.getNext()
+        pivot = spot.getItem()
+        lower = linked_list()
+        higher = linked_list()
+        while spot.getNext() is not None:
+            spot = spot.getNext()
+            if spot.getItem() < pivot:
+                lower.append(spot.getItem())
+            else:
+                higher.append(spot.getItem())
+        #order todo things 
+        #quick sort sides
+        #make self lower
+        #merge together
+        higher.quick_sort()
+        lower.quick_sort()
+        lower + linked_list(contents=[pivot])
+        lower + higher
+        self.first = lower.first
+        self.last = lower.last
+        self.len = lower.len
+    def validate(self):
+        spot = self.first
+        for i in range(self.len):
+            if spot.getNext() is None:
+                raise AttributeError('len not equal to len \n too short')
+            spot = spot.getNext()
+        if spot.getNext() is not None:
+            raise AttributeError('len not equal to len \n too long')
+        if spot != self.last:
+            raise AttributeError('last not equal to last')
+def time_sort(to_sort):
     time = thread_time()
-    link_list.merge_sort()
-    return (thread_time() - time)
+    to_sort.merge_sort()
+    return (thread_time()- time)
 
-
-def test_bubble(n, shuffle_amount, f):
-    for i in range(2, n):
+def test_sort(n, shuffle_amount, f,step):
+    for i in range(2, n+1,step):
+        total_time = thread_time()
         time_list = []
-        for x in range(5):
+        for x in range(1):
             bad_time_list = [
-                time_bubble(make_list_reverse(i)),
-                time_bubble(make_list_almost(i, shuffle_amount)),
-                time_bubble(make_list_shuffle(i)),
-                time_bubble(list(range(i)))
+                #time_sort(make_list_reverse(i)),
+                #time_sort(make_list_almost(i, shuffle_amount)),
+                time_sort(make_list_shuffle(i)),
+                #time_sort(list(range(i)))
             ]
             time_list.append(bad_time_list)
         print(i)
@@ -237,6 +288,8 @@ def test_bubble(n, shuffle_amount, f):
         for h in good_time_list:
             f.write(',')
             f.write(str(h))
+        f.flush() #the tolit
+        print(thread_time()-total_time-sum(good_time_list))
 
 
 def make_list_almost(size, shuffle_amount):
@@ -258,21 +311,25 @@ def make_list_shuffle(size):
 
 
 def make_list_reverse(size):
-    stuff = list(range(size, 1, -1))
-    return (stuff)
+    stuff = list(range(size-1, -1, -1))
+    good_stuff = linked_list(stuff)
+    return(good_stuff)
 
 
 def main():
-    size = 302
+    size = 598
     f = open('data' + str(size) + '.csv', 'w')
     f.write("number of elments,reverse,almost sorted,shuffed,sorted")
-    test_bubble(size, 25, f)
+    test_sort(size, 25, f,1)
     f.close()
     
 def test():
-    link_list = linked_list(range(10,0,-1))
+    link_list = linked_list(range(2,-1,-1))
+    link_list2 = linked_list([3,4])
+    link_list + link_list2
     print(link_list)
-    link_list.merge_sort()
+    link_list.quick_sort()
     print(link_list)
-#test()
+print('\n'*2)
 main()
+#test()
