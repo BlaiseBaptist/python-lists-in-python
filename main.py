@@ -270,17 +270,17 @@ def time_sort(to_sort,funtion):
     time = thread_time()
     funtion(to_sort)
     return (thread_time()- time)
-
+    
 def test_sort(n, shuffle_amount, f,step,funtion):
     for i in range(2, n+1,step):
         total_time = thread_time()
         time_list = []
-        for x in range(1):
+        for x in range(5):
             bad_time_list = [
-                #time_sort(make_list_reverse(i),funtion),
-                #time_sort(make_list_almost(i, shuffle_amount),funtion),
+                time_sort(make_list_reverse(i),funtion),
+                time_sort(make_list_almost(i, shuffle_amount),funtion),
                 time_sort(make_list_shuffle(i),funtion),
-                #time_sort(list(range(i)),funtion)
+                time_sort(linked_list(list(range(i))),funtion)
             ]
             time_list.append(bad_time_list)
         print(i)
@@ -290,8 +290,11 @@ def test_sort(n, shuffle_amount, f,step,funtion):
         for h in good_time_list:
             f.write(',')
             f.write(str(h))
-        f.flush() #the tolit
-        print(thread_time()-total_time-sum(good_time_list))
+        f.flush()
+        print('other stuff time ',end = "")
+        print(thread_time()-total_time-sum(good_time_list)*5)
+        print('total time ',end = "")
+        print(thread_time()-total_time)
 
 
 def make_list_almost(size, shuffle_amount):
@@ -300,31 +303,26 @@ def make_list_almost(size, shuffle_amount):
         stuff.append(i)
     for i in range(shuffle_amount):
         stuff.swap(random.randint(0, size - 1), random.randint(0, size - 1))
-    return (stuff)
+    return(linked_list(stuff))
 
 
 def make_list_shuffle(size):
     stuff = list(range(size))
     random.shuffle(stuff)
-    stuff_list = linked_list()
-    for i in stuff:
-        stuff_list.append(i)
-    return (stuff_list)
+    return (linked_list(stuff))
 
 
 def make_list_reverse(size):
     stuff = list(range(size-1, -1, -1))
     good_stuff = linked_list(stuff)
-    return(good_stuff)
-
-
+    return(linked_list(stuff))
 def main():
-    size = 15
+    size = 100
     fun_string = 'merge_sort'
     step = 1
     funtion = getattr(linked_list,fun_string)
     f = open(fun_string + str(size)+'.csv', 'w')
-    f.write("number of elments,reverse,almost sorted,shuffed,sorted")
+    f.write("number of elements,reverse,almost sorted,shuffed,sorted")
     test_sort(size, 25, f,step,funtion)
     f.close()
     
@@ -332,7 +330,7 @@ def test():
     link_list = linked_list(range(2,-1,-1))
     link_list2 = linked_list([3,4])
     link_list + link_list2
-    funtion = linked_list().quick_sort
+    funtion = linked_list().merge_sort
     print(link_list)
     link_list.funtion()
     print(link_list)
