@@ -1,6 +1,7 @@
 from statistics import median
 import random
 from time import thread_time
+from math import log
 
 
 class linked_list():
@@ -266,33 +267,33 @@ class linked_list():
         if spot != self.last:
             raise AttributeError('last not equal to last')
             
-def time_sort(to_sort,funtion):
+def time_sort(to_sort,function):
     time = thread_time()
-    funtion(to_sort)
+    function(to_sort)
     return (thread_time()- time)
     
-def test_sort(n, shuffle_amount, f,step,funtion):
-    for i in range(2, n+1,step):
+def test_sort(file,function,shuffle_amount=25,size=200,step=1,times=5):
+    for i in range(2, size+1,step):
         total_time = thread_time()
         time_list = []
-        for x in range(5):
+        for x in range(times):
             bad_time_list = [
-                time_sort(make_list_reverse(i),funtion),
-                time_sort(make_list_almost(i, shuffle_amount),funtion),
-                time_sort(make_list_shuffle(i),funtion),
-                time_sort(linked_list(list(range(i))),funtion)
+                time_sort(make_list_reverse(i),function),
+                time_sort(make_list_almost(i, shuffle_amount),function),
+                time_sort(make_list_shuffle(i),function),
+                time_sort(linked_list(list(range(i))),function)
             ]
             time_list.append(bad_time_list)
         print(i)
         good_time_list = median(time_list)
-        f.write('\n')
-        f.write(str(i))
+        file.write('\n')
+        file.write(str(i))
         for h in good_time_list:
-            f.write(',')
-            f.write(str(h))
-        f.flush()
+            file.write(',')
+            file.write(str(h))
+        file.flush()
         print('other stuff time ',end = "")
-        print(thread_time()-total_time-sum(good_time_list)*5)
+        print(thread_time()-total_time-sum(good_time_list)*times)
         print('total time ',end = "")
         print(thread_time()-total_time)
 
@@ -317,23 +318,22 @@ def make_list_reverse(size):
     good_stuff = linked_list(stuff)
     return(linked_list(stuff))
 def main():
-    size = 100
-    fun_string = 'merge_sort'
-    step = 1
-    funtion = getattr(linked_list,fun_string)
-    f = open(fun_string + str(size)+'.csv', 'w')
-    f.write("number of elements,reverse,almost sorted,shuffed,sorted")
-    test_sort(size, 25, f,step,funtion)
+    size = 10**6
+    fun_string = 'merge_sort' #does fun things 
+    step = 10**4
+    size_name = str(size)
+    if size > 10**3:
+        size_name='10^'+str(round(log(size)))
+    function = getattr(linked_list,fun_string)
+    f = open(fun_string + size_name+'.csv', 'w')
+    f.write("number of elements,reverse,almost sorted,shuffled,sorted")
+    test_sort(file=f,function=function,shuffle_amount=25,size=size,step=step,times=1)
     f.close()
     
 def test():
-    link_list = linked_list(range(2,-1,-1))
-    link_list2 = linked_list([3,4])
-    link_list + link_list2
-    funtion = linked_list().merge_sort
-    print(link_list)
-    link_list.funtion()
-    print(link_list)
+    stuff = 6000000
+    l_stuff = log(stuff)
+    print('10^',round(l_stuff),sep='')
 print('\n'*2)
 main()
 #test()
