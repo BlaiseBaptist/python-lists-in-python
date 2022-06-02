@@ -272,17 +272,20 @@ def time_sort(to_sort,function):
     function(to_sort)
     return (thread_time()- time)
     
-def test_sort(file,function,shuffle_amount=25,size=200,step=1,times=5):
+def test_sort(file,function,shuffle_amount=25,size=200,step=1,times=5,all=True):
     for i in range(2, size+1,step):
         total_time = thread_time()
         time_list = []
         for x in range(times):
-            bad_time_list = [
-                time_sort(make_list_reverse(i),function),
-                time_sort(make_list_almost(i, shuffle_amount),function),
-                time_sort(make_list_shuffle(i),function),
-                time_sort(linked_list(list(range(i))),function)
-            ]
+            if all:
+                bad_time_list = [
+                    time_sort(make_list_reverse(i),function),
+                    time_sort(make_list_almost(i, shuffle_amount),function),
+                    time_sort(make_list_shuffle(i),function),
+                    time_sort(linked_list(list(range(i))),function)
+                ]
+            else:
+                bad_time_list = [time_sort(make_list_reverse(i),function)]
             time_list.append(bad_time_list)
         print(i)
         good_time_list = median(time_list)
@@ -318,16 +321,14 @@ def make_list_reverse(size):
     good_stuff = linked_list(stuff)
     return(linked_list(stuff))
 def main():
-    size = 10**6
+    size = 10**7
+    step = 10**5
     fun_string = 'merge_sort' #does fun things 
-    step = 10**4
-    size_name = str(size)
-    if size > 10**3:
-        size_name='10^'+str(round(log(size)))
+    name = "{fun}{size:G}.csv"
     function = getattr(linked_list,fun_string)
-    f = open(fun_string + size_name+'.csv', 'w')
+    f = open(name.format(fun=fun_string,size=size), 'w')
     f.write("number of elements,reverse,almost sorted,shuffled,sorted")
-    test_sort(file=f,function=function,shuffle_amount=25,size=size,step=step,times=1)
+    test_sort(file=f,function=function,shuffle_amount=25,size=size,step=step,times=1,all=False)
     f.close()
     
 def test():
