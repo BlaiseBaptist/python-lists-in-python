@@ -12,17 +12,15 @@ https://github.com/BlaiseBaptist/python-lists-in-python/blob/56f69acb4e32dd78992
 
 ## Sorting Algorithms
 
-||Bubble|Selection|Insertion|Merge|Quick
-|:--|:--|:--|:--|:--|:--
-|Time Complexity|O(n<sup>2</sup>)|O(n<sup>2</sup>)|O(n<sup>2</sup>)|O(n log n)|O(n log n)
+||Bubble|Selection|Merge|Quick
+|:--|:--|:--|:--|:--
+|Time Complexity|O(n<sup>2</sup>)|O(n<sup>2</sup>)|O(n log n)|O(n log n)
 
 
 ### Bubble
 Compares pairs of elements and swaps them if they are out of order
 ### Selection
 Takes the smallest element of the main list and adds it to a sub-list until 
-### Insertion
-Takes one element and puts it in its spot
 ### Merge
 Splits the list into elements then merges pairs of sub-lists keeping the elements in order until is one list again
 ### Quick
