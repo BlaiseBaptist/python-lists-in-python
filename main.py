@@ -321,13 +321,17 @@ def make_list_reverse(size):
     good_stuff = linked_list(stuff)
     return(linked_list(stuff))
 def main():
-    size = 10**7
-    step = 10**5
-    fun_string = 'merge_sort' #does fun things 
+    size = 1000
+    step = 10
+    do_all = False
+    fun_string = "quick_sort" #does fun things 
     name = "{fun}{size:G}.csv"
     function = getattr(linked_list,fun_string)
     f = open(name.format(fun=fun_string,size=size), 'w')
-    f.write("number of elements,reverse,almost sorted,shuffled,sorted")
+    if do_all:
+        f.write("number of elements,reverse,almost sorted,shuffled,sorted")
+    else:
+        f.write("number of elements,reverse")
     test_sort(file=f,function=function,shuffle_amount=25,size=size,step=step,times=1,all=False)
     f.close()
     
